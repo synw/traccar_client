@@ -21,10 +21,11 @@ class Device {
   double batteryLevel;
 
   /// Create a device from json data
-  Device.fromJson(Map<String, dynamic> data)
+  Device.fromJson(Map<String, dynamic> data, {String timeZoneOffset = "0"})
       : this.deviceId = data["deviceId"].toString(),
         this.id = int.parse(data["id"].toString()),
-        this.position = DevicePosition.fromJson(data),
+        this.position =
+            DevicePosition.fromJson(data, timeZoneOffset: timeZoneOffset),
         this.batteryLevel =
             double.parse(data["attributes"]["batteryLevel"].toString()) {
     if (data.containsKey("name")) {
@@ -60,10 +61,11 @@ class DevicePosition {
   final String address;
 
   /// The data of the position
-  final DateTime date;
+  DateTime date;
 
   /// Create a position from json
-  DevicePosition.fromJson(Map<String, dynamic> data)
+  DevicePosition.fromJson(Map<String, dynamic> data,
+      {String timeZoneOffset = "0"})
       : this.id = int.parse(data["id"].toString()),
         this.geoPoint = GeoPoint(
             name: data["id"].toString(),
@@ -75,11 +77,24 @@ class DevicePosition {
         this.distance = double.parse(data["attributes"]["distance"].toString()),
         this.totalDistance =
             double.parse(data["attributes"]["totalDistance"].toString()),
-        this.address = data["address"].toString(),
-        this.date = DateTime.parse(data["fixTime"].toString());
+        this.address = data["address"].toString() {
+    this.date = _dateFromUtcOffset(data["fixTime"].toString(), timeZoneOffset);
+  }
 
   @override
   String toString() {
     return "$date : ${geoPoint.latitude}, ${geoPoint.longitude}";
+  }
+
+  DateTime _dateFromUtcOffset(String dateStr, String timeZoneOffset) {
+    DateTime d = DateTime.parse(dateStr);
+    if (timeZoneOffset.startsWith("+")) {
+      final of = int.parse(timeZoneOffset.replaceFirst("+", ""));
+      d = d.add(Duration(hours: of));
+    } else if (timeZoneOffset.startsWith("-")) {
+      final of = int.parse(timeZoneOffset.replaceFirst("-", ""));
+      d = d.subtract(Duration(hours: of));
+    }
+    return d;
   }
 }

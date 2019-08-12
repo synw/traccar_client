@@ -27,21 +27,25 @@ class TraccarQueries {
   Future<List<Device>> positions(
       {String protocol = "http",
       @required String deviceId,
-      @required String from,
-      @required String to}) async {
+      @required Duration since,
+      String timeZoneOffset = "0",
+      DateTime date}) async {
     assert(cookie != null, "The cookie is not set");
-    String uri = "$protocol://$serverUrl/api/positions";
+    final uri = "$protocol://$serverUrl/api/positions";
     if (verbose) {
       print("Query: $uri");
     }
     Response response;
+    date ??= DateTime.now();
+    final fromDate = date.subtract(since);
+    print("${date.toIso8601String()} / $fromDate");
     try {
       response = await _dio.get<dynamic>(
         uri,
         queryParameters: <String, dynamic>{
           "deviceId": int.parse("$deviceId"),
-          "from": from,
-          "to": to
+          "from": _formatDate(fromDate),
+          "to": _formatDate(date)
         },
         options: Options(
           contentType: ContentType.json,
@@ -70,8 +74,15 @@ class TraccarQueries {
     }
     final devices = <Device>[];
     for (final data in response.data) {
-      devices.add(Device.fromJson(data as Map<String, dynamic>));
+      devices.add(Device.fromJson(data as Map<String, dynamic>,
+          timeZoneOffset: timeZoneOffset));
     }
     return devices;
+  }
+
+  String _formatDate(DateTime date) {
+    final d = date.toIso8601String().split(".")[0];
+    final l = d.split(":");
+    return "${l[0]}:${l[1]}:00Z";
   }
 }
