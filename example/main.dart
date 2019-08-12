@@ -18,8 +18,10 @@ void main() async {
   });
 
   /// query for last positions for a device
-  final devices = await trac.queries.positions(
-      deviceId: "2", from: "2019-08-01T18:30:00Z", to: "2019-08-12T13:30:00Z");
+  final devices = await trac.query.positions(
+    deviceId: "1", since: Duration(days: 7),
+    //timeZoneOffset: "+2"
+  );
   for (final device in devices) {
     print(device);
   }
