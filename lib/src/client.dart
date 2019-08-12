@@ -26,7 +26,7 @@ class DevicesPositions {
   final bool verbose;
 
   /// The queries available
-  TraccarQueries queries;
+  TraccarQueries query;
 
   final _readyCompleter = Completer<Null>();
 
@@ -42,7 +42,7 @@ class DevicesPositions {
   /// Run init before using the other methods
   Future<void> init() async {
     await _getCookie();
-    queries =
+    query =
         TraccarQueries(cookie: _cookie, serverUrl: serverUrl, verbose: verbose);
     _readyCompleter.complete();
   }
