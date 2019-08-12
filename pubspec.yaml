@@ -2,9 +2,12 @@ name: traccar_client
 description: Traccar client for Dart. Get real time devices positions from a Traccar server.
 
 environment:
-  sdk: '>=2.0.0 <3.0.0'
+  sdk: '>=2.4.0 <3.0.0'
 
 dependencies:
-  web_socket_channel: ^1.0.12
-  dio: ^2.1.2
+  web_socket_channel: ^1.0.15
+  dio: ^2.1.13
   latlong: ^0.6.1
+  pedantic: ^1.6.0
+  meta: ^1.1.6
+  geopoint: ^0.4.1
