@@ -42,7 +42,9 @@ class TraccarQueries {
       final id = int.parse(data["id"].toString());
       final uniqueId = data["uniqueId"].toString();
       final name = data["name"].toString();
-      final device = Device(id: id, uniqueId: uniqueId, name: name);
+      final isActive = (data["status"].toString() != "offline");
+      final device =
+          Device(id: id, uniqueId: uniqueId, name: name, isActive: isActive);
       //final date =
       //    dateFromUtcOffset(data["fixTime"].toString(), timeZoneOffset);
       devices.add(device);

@@ -12,6 +12,8 @@ class Device {
       this.position,
       this.batteryLevel,
       this.keepAlive = 1,
+      this.isActive,
+      this.isDisabled,
       this.properties = const <String, dynamic>{}});
 
   /// The device database id
@@ -34,6 +36,12 @@ class Device {
 
   /// Minutes a device is considered alive
   int keepAlive;
+
+  /// The device can be disabled
+  bool isDisabled;
+
+  /// false if the device has never updated one position
+  bool isActive;
 
   /// Extra properties for the device
   Map<String, dynamic> properties;
