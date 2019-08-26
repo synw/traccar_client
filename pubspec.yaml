@@ -1,12 +1,15 @@
 name: traccar_client
-description: Traccar client for Dart. Get real time devices positions from a Traccar server.
+author: synw <ansterj@gmail.com>
+description: Dart client for the Traccar geolocation server. Get real time devices positions from a Traccar server.
+homepage: https://github.com/synw/traccar_client
+version: 0.1.0
 
 environment:
   sdk: '>=2.4.0 <3.0.0'
 
 dependencies:
   web_socket_channel: ^1.0.15
-  dio: ^2.1.13
+  dio: ^2.1.16
   latlong: ^0.6.1
   pedantic: ^1.6.0
   meta: ^1.1.6
