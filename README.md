@@ -5,30 +5,32 @@ Dart client for the Traccar geolocation server. Get real time devices positions 
 
 ## Usage
 
+### Initialize
+
    ```dart
    import 'package:pedantic/pedantic.dart';
    import 'package:traccar_client/traccar_client.dart';
    import 'conf.dart';
 
-   main() async {
-      /// [serverUrl] ans [userToken] are taken from conf
-      final trac =
-      Traccar(serverUrl: serverUrl, userToken: userToken);
-      unawaited(trac.init());
-      await trac.onReady;
-
-      /// listen for updates
-      final positions = await trac.positions();
-      print("Listening for position updates");
-      positions.listen((device) {
-         print("POSITION UPDATE: $device");
-         print("${device.id}: ${device.position.geoPoint.latitude} / " +
-            "${device.position.geoPoint.longitude}");
-      });
-   }
+   /// [serverUrl] and [userToken] are taken from conf
+   final trac = Traccar(serverUrl: serverUrl, userToken: userToken);
+   unawaited(trac.init());
+   await trac.onReady;
    ```
 
-## Queries
+### Listen for positions updates
+
+   ```dart
+   final positions = await trac.positions();
+   print("Listening for position updates");
+   positions.listen((device) {
+      print("POSITION UPDATE: $device");
+      print("${device.id}: ${device.position.geoPoint.latitude} / " +
+         "${device.position.geoPoint.longitude}");
+   });
+   ```
+
+## Run queries
 
 Query for a list of devices:
 
