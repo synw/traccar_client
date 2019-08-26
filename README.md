@@ -1,5 +1,7 @@
 # Traccar client
 
+[![pub package](https://img.shields.io/pub/v/traccar_client.svg)](https://pub.dartlang.org/packages/traccar_client)
+
 Dart client for the Traccar geolocation server. Get real time devices positions updates from a
 [Traccar](http://traccar.org/) server.
 
