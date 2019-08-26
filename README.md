@@ -1,6 +1,6 @@
 # Traccar client
 
-Traccar client for Dart. Get real time devices positions updates from a 
+Traccar client for Dart. Get real time devices positions updates from a
 [Traccar](http://traccar.org/) server.
 
 ## Usage
@@ -14,11 +14,21 @@ Traccar client for Dart. Get real time devices positions updates from a
          userToken: "USER_TOKEN_HERE");
       var positions = await updater.positions();
       positions.listen((device) {
-         print("POSITION UPDATE");
+         print("Position update");
          print("${device.name}: ${device.position.point.latitude} / " +
             "${device.position.point.longitude}");
       });
    }
+   ```
+
+## Queries
+
+Query for a list of devices:
+
+   ```dart
+   await trac.query.devices().then((List<Device> devices) {
+      print("$devices");
+   });
    ```
 
 ## Data structure
@@ -46,3 +56,7 @@ The position stream outputs `Device` objects with updated positions:
      final DateTime date;
    }
    ```
+
+## Example
+
+To run the example put your server address and user token in `conf.dart`
