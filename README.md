@@ -1,6 +1,6 @@
 # Traccar client
 
-Traccar client for Dart. Get real time devices positions updates from a
+Dart client for the Traccar geolocation server. Get real time devices positions updates from a
 [Traccar](http://traccar.org/) server.
 
 ## Usage
