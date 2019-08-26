@@ -12,17 +12,14 @@ void main() async {
   final positions = await trac.positions();
   print("Listening for position updates");
   positions.listen((device) {
-    print("POSITION UPDATE");
+    print("POSITION UPDATE: $device");
     print("${device.name}: ${device.position.geoPoint.latitude} / " +
         "${device.position.geoPoint.longitude}");
   });
 
-  /// query for last positions for a device
-  final devices = await trac.query.positions(
-    deviceId: "1", since: Duration(days: 7),
-    //timeZoneOffset: "+2"
-  );
-  for (final device in devices) {
-    print(device);
-  }
+  /// devices
+  await trac.query.devices().then((List<Device> devices) {
+    print("DEVICES LIST:");
+    print("$devices");
+  });
 }
