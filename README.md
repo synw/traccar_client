@@ -26,7 +26,7 @@ Dart client for the Traccar geolocation server. Get real time devices positions 
 Query for a list of devices:
 
    ```dart
-   await trac.query.devices().then((List<Device> devices) {
+   trac.query.devices().then((List<Device> devices) {
       print("$devices");
    });
    ```
@@ -38,8 +38,13 @@ The position stream outputs `Device` objects with updated positions:
    ```dart
    class Device {
      final int id;
-     final String deviceId;
-     final String name;
+     String uniqueId;
+     int groupId;
+     String name;
+     double batteryLevel;
+     int keepAlive;
+     bool isDisabled;
+     bool isActive;
      DevicePosition position;
    }
 
@@ -51,7 +56,6 @@ The position stream outputs `Device` objects with updated positions:
      final double speed;
      final double distance;
      final double totalDistance;
-     final double batteryLevel;
      final String address;
      final DateTime date;
    }
