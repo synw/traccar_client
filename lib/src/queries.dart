@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
 import 'models.dart';
-import 'utils.dart';
 
 /// A class to handle the queries to the server
 class TraccarQueries {
