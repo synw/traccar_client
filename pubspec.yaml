@@ -10,4 +10,4 @@ dependencies:
   latlong: ^0.6.1
   pedantic: ^1.6.0
   meta: ^1.1.6
-  geopoint: ^0.4.1
+  geopoint: ^0.5.0
