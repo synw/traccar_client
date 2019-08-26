@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
 import 'models.dart';
+import 'utils.dart';
 
 /// A class to handle the queries to the server
 class TraccarQueries {
@@ -10,6 +11,7 @@ class TraccarQueries {
   TraccarQueries(
       {@required this.cookie,
       @required this.serverUrl,
+      this.timeZoneOffset = "0",
       @required this.verbose});
 
   /// The cookie used
@@ -21,7 +23,35 @@ class TraccarQueries {
   /// The server url
   final String serverUrl;
 
+  /// The timezone offset from utc
+  final String timeZoneOffset;
+
   final _dio = Dio();
+
+  /// Get a list of devices
+  Future<List<Device>> devices({String protocol = "http"}) async {
+    assert(cookie != null, "The cookie is not set");
+    final uri = "$protocol://$serverUrl/api/devices";
+    if (verbose) {
+      print("Query: $uri");
+    }
+    final response = await _httpRequest(uri: uri);
+    //print("RESP^${response.data}");
+    final devices = <Device>[];
+    for (final data in response.data) {
+      final id = int.parse(data["id"].toString());
+      final uniqueId = data["uniqueId"].toString();
+      final name = data["name"].toString();
+      final device = Device(id: id, uniqueId: uniqueId, name: name);
+      //final date =
+      //    dateFromUtcOffset(data["fixTime"].toString(), timeZoneOffset);
+      devices.add(device);
+    }
+    if (verbose) {
+      print("Found ${devices.length} devices");
+    }
+    return devices;
+  }
 
   /// Get a device positions for a period of time
   Future<List<Device>> positions(
@@ -35,18 +65,30 @@ class TraccarQueries {
     if (verbose) {
       print("Query: $uri");
     }
-    Response response;
     date ??= DateTime.now();
     final fromDate = date.subtract(since);
-    print("${date.toIso8601String()} / $fromDate");
+    final queryParameters = <String, dynamic>{
+      "deviceId": int.parse("$deviceId"),
+      "from": _formatDate(fromDate),
+      "to": _formatDate(date)
+    };
+    final response = await _httpRequest(uri: uri, queryParams: queryParameters);
+    final devices = <Device>[];
+    for (final data in response.data) {
+      devices.add(Device.fromPosition(data as Map<String, dynamic>,
+          timeZoneOffset: timeZoneOffset));
+    }
+    return devices;
+  }
+
+  Future<Response> _httpRequest(
+      {@required String uri,
+      Map<String, dynamic> queryParams = const <String, dynamic>{}}) async {
+    Response response;
     try {
       response = await _dio.get<dynamic>(
         uri,
-        queryParameters: <String, dynamic>{
-          "deviceId": int.parse("$deviceId"),
-          "from": _formatDate(fromDate),
-          "to": _formatDate(date)
-        },
+        queryParameters: queryParams,
         options: Options(
           contentType: ContentType.json,
           headers: <String, dynamic>{
@@ -72,12 +114,7 @@ class TraccarQueries {
     } catch (e) {
       throw ("ERROR $e");
     }
-    final devices = <Device>[];
-    for (final data in response.data) {
-      devices.add(Device.fromJson(data as Map<String, dynamic>,
-          timeZoneOffset: timeZoneOffset));
-    }
-    return devices;
+    return response;
   }
 
   String _formatDate(DateTime date) {

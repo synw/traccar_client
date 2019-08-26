@@ -1,15 +1,27 @@
 import 'package:geopoint/geopoint.dart';
+import 'utils.dart';
 
 /// A class representing a device
 class Device {
   /// Main constructor
-  Device({this.id, this.deviceId, this.name, this.position, this.batteryLevel});
+  Device(
+      {this.id,
+      this.uniqueId,
+      this.groupId,
+      this.name,
+      this.position,
+      this.batteryLevel,
+      this.keepAlive = 1,
+      this.properties = const <String, dynamic>{}});
 
   /// The device database id
   final int id;
 
   /// The on device unique id
-  final String deviceId;
+  String uniqueId;
+
+  /// The group of the device
+  int groupId;
 
   /// The device name
   String name;
@@ -20,26 +32,61 @@ class Device {
   /// The device battery level
   double batteryLevel;
 
+  /// Minutes a device is considered alive
+  int keepAlive;
+
+  /// Extra properties for the device
+  Map<String, dynamic> properties;
+
+  /// Is the device online
+  bool get isAlive => _isDeviceAlive();
+
   /// Create a device from json data
-  Device.fromJson(Map<String, dynamic> data, {String timeZoneOffset = "0"})
-      : this.deviceId = data["deviceId"].toString(),
-        this.id = int.parse(data["id"].toString()),
+  Device.fromPosition(Map<String, dynamic> data,
+      {String timeZoneOffset = "0", int keepAlive = 1})
+      : this.keepAlive = keepAlive,
+        this.id = int.parse(data["deviceId"].toString()),
         this.position =
             DevicePosition.fromJson(data, timeZoneOffset: timeZoneOffset),
         this.batteryLevel =
-            double.parse(data["attributes"]["batteryLevel"].toString()) {
-    if (data.containsKey("name")) {
-      this.name = data["name"].toString();
+            double.parse(data["attributes"]["batteryLevel"].toString());
+
+  bool _isDeviceAlive() {
+    if (position == null) {
+      return false;
     }
+    final now = DateTime.now();
+    final dateAlive = now.subtract(Duration(minutes: keepAlive));
+    bool isAlive = false;
+    if (position.date.isAfter(dateAlive)) {
+      isAlive = true;
+    }
+    return isAlive;
+  }
+
+  /// Print a description of the device
+  void describe() {
+    print("Device:");
+    print(" - id : $id");
+    print(" - uniqueId : $uniqueId");
+    print(" - name : $name");
+    print(" - batteryLevel: $batteryLevel");
+    print(" - position : $position");
   }
 
   @override
   String toString() {
-    String _name = "$deviceId";
+    String _name = "$uniqueId";
     if (name != null) {
       _name = name;
     }
-    return "$_name: $position";
+    String res;
+    if (position != null) {
+      res = "$_name: $position";
+    } else {
+      res = "$_name";
+    }
+    return res;
   }
 }
 
@@ -60,7 +107,7 @@ class DevicePosition {
   /// The address of the device position
   final String address;
 
-  /// The data of the position
+  /// The date of the position
   DateTime date;
 
   /// Create a position from json
@@ -78,23 +125,11 @@ class DevicePosition {
         this.totalDistance =
             double.parse(data["attributes"]["totalDistance"].toString()),
         this.address = data["address"].toString() {
-    this.date = _dateFromUtcOffset(data["fixTime"].toString(), timeZoneOffset);
+    this.date = dateFromUtcOffset(data["fixTime"].toString(), timeZoneOffset);
   }
 
   @override
   String toString() {
     return "$date : ${geoPoint.latitude}, ${geoPoint.longitude}";
-  }
-
-  DateTime _dateFromUtcOffset(String dateStr, String timeZoneOffset) {
-    DateTime d = DateTime.parse(dateStr);
-    if (timeZoneOffset.startsWith("+")) {
-      final of = int.parse(timeZoneOffset.replaceFirst("+", ""));
-      d = d.add(Duration(hours: of));
-    } else if (timeZoneOffset.startsWith("-")) {
-      final of = int.parse(timeZoneOffset.replaceFirst("-", ""));
-      d = d.subtract(Duration(hours: of));
-    }
-    return d;
   }
 }

@@ -7,11 +7,12 @@ import 'models.dart';
 import 'queries.dart';
 
 /// The main class to handle device positions
-class DevicesPositions {
+class Traccar {
   /// Provide a server url and a user token
-  DevicesPositions(
+  Traccar(
       {@required this.serverUrl,
       @required this.userToken,
+      this.keepAlive = 1,
       this.verbose = false})
       : assert(serverUrl != null),
         assert(userToken != null);
@@ -28,6 +29,9 @@ class DevicesPositions {
   /// The queries available
   TraccarQueries query;
 
+  /// Minutes a device is considered alive
+  int keepAlive;
+
   final _readyCompleter = Completer<Null>();
 
   final _dio = Dio();
@@ -41,9 +45,15 @@ class DevicesPositions {
 
   /// Run init before using the other methods
   Future<void> init() async {
+    if (verbose) {
+      print("Initializing Traccar cli");
+    }
     await _getCookie();
     query =
         TraccarQueries(cookie: _cookie, serverUrl: serverUrl, verbose: verbose);
+    if (verbose) {
+      print("Traccar client initialized");
+    }
     _readyCompleter.complete();
   }
 
@@ -54,25 +64,46 @@ class DevicesPositions {
     }
     final posStream =
         await _positionsStream(serverUrl: serverUrl, userToken: userToken);
+    if (verbose) {
+      print("Subscribing to positions stream");
+    }
     _rawPosSub = posStream.listen((dynamic data) {
-      final Map dataMap = json.jsonDecode(data.toString()) as Map;
+      print("DATA $data");
+      final dataMap = json.jsonDecode(data.toString()) as Map<String, dynamic>;
       if (dataMap.containsKey("positions")) {
-        if (_devicesMap.isNotEmpty) {
-          DevicePosition pos;
-          for (final posMap in dataMap["positions"]) {
-            pos = DevicePosition.fromJson(posMap as Map<String, dynamic>);
-            _devicesMap[pos.id].position = pos;
-            _positions.sink.add(_devicesMap[pos.id]);
+        if (verbose) {
+          print("Device positions update:");
+        }
+        DevicePosition pos;
+        for (final posMap in dataMap["positions"]) {
+          //print("POS MAP $posMap");
+          pos = DevicePosition.fromJson(posMap as Map<String, dynamic>);
+          final id = posMap["deviceId"] as int;
+          Device device;
+          if (_devicesMap.containsKey(id)) {
+            device = _devicesMap[id];
+          } else {
+            device = Device.fromPosition(posMap as Map<String, dynamic>,
+                keepAlive: keepAlive);
+          }
+          device.position = pos;
+          _devicesMap[id] = device;
+          _positions.sink.add(device);
+          if (verbose) {
+            print(" - $pos");
           }
         }
       } else {
         for (final d in dataMap["devices"]) {
+          if (verbose) {
+            print("Devices update:");
+          }
           if (!_devicesMap.containsKey(d["id"])) {
             final id = int.parse(d["id"].toString());
-            _devicesMap[id] = Device(
-                id: id,
-                deviceId: d["uniqueId"].toString(),
-                name: d["name"].toString());
+            d["name"] ??= d["id"].toString();
+            final device = Device(id: id, name: d["name"].toString());
+            _devicesMap[id] = device;
+            //print(" - ${device.name}");
           }
         }
       }
@@ -81,9 +112,11 @@ class DevicesPositions {
   }
 
   Future<void> _getCookie({String protocol = "http"}) async {
-    final response = await _dio.get<dynamic>(
-      "$protocol://$serverUrl/api/session?token=$userToken",
-    );
+    final addr = "$protocol://$serverUrl/api/session?token=$userToken";
+    if (verbose) {
+      print("Getting cookie at $addr");
+    }
+    final response = await _dio.get<dynamic>(addr);
     _cookie = response.headers["set-cookie"][0];
     if (verbose) {
       print("Cookie set: $_cookie");

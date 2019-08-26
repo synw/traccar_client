@@ -3,8 +3,8 @@ import 'package:pedantic/pedantic.dart';
 import 'conf.dart';
 
 void main() async {
-  final trac = DevicesPositions(
-      serverUrl: serverUrl, userToken: userToken, verbose: true);
+  final trac =
+      Traccar(serverUrl: serverUrl, userToken: userToken, verbose: true);
   unawaited(trac.init());
   await trac.onReady;
 
