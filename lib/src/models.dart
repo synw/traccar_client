@@ -84,9 +84,12 @@ class Device {
 
   @override
   String toString() {
-    String _name = "$uniqueId";
+    String _name;
     if (name != null) {
       _name = name;
+    }
+    if (name == null && uniqueId != null) {
+      _name = "$uniqueId";
     }
     String res;
     if (position != null) {
@@ -94,7 +97,7 @@ class Device {
     } else {
       res = "$_name";
     }
-    return res;
+    return "$id: $res";
   }
 }
 
@@ -138,6 +141,7 @@ class DevicePosition {
 
   @override
   String toString() {
-    return "$date : ${geoPoint.latitude}, ${geoPoint.longitude}";
+    return "${date.hour}:${date.minute}:${date.second} " +
+        ": ${geoPoint.latitude}, ${geoPoint.longitude}";
   }
 }
