@@ -76,7 +76,7 @@ The position stream outputs `Device` objects with updated positions:
    }
    ```
 
-[Geopoint](https://github.com/synw/geopoint) is a model to store a geographical datapoint: [data structure](https://github.com/synw/geopoint#geopoint-1)
+[GeoPoint](https://github.com/synw/geopoint) is a model to store a geographical datapoint: [data structure](https://github.com/synw/geopoint#geopoint-1)
 
 ## Example
 
