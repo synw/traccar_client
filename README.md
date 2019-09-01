@@ -42,6 +42,13 @@ Query for a list of devices:
    });
    ```
 
+Query for positions history for a device:
+
+```dart
+   final List<Device> pos = await trac.query.positions(
+      deviceId: "1", since: Duration(hours: 3));
+   ```
+
 ## Data structure
 
 The position stream outputs `Device` objects with updated positions:
