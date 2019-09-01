@@ -68,16 +68,15 @@ The position stream outputs `Device` objects with updated positions:
 
    class DevicePosition {
      final int id;
-     final LatLng point;
-     final double accuracy;
-     final double altitude;
-     final double speed;
+     final GeoPoint geoPoint;
      final double distance;
      final double totalDistance;
      final String address;
      final DateTime date;
    }
    ```
+
+[Geopoint](https://github.com/synw/geopoint) is a model to store a geographical datapoint: [data structure](https://github.com/synw/geopoint#geopoint-1)
 
 ## Example
 
