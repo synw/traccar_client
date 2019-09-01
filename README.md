@@ -32,9 +32,7 @@ Dart client for the Traccar geolocation server. Get real time devices positions 
    });
    ```
 
-## Run queries
-
-Query for a list of devices:
+### Get a list of devices
 
    ```dart
    trac.query.devices().then((List<Device> devices) {
@@ -42,7 +40,7 @@ Query for a list of devices:
    });
    ```
 
-Query for positions history for a device:
+### Get positions history for a device
 
 ```dart
    final List<Device> pos = await trac.query.positions(
