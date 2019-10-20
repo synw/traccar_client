@@ -112,12 +112,34 @@ class Traccar {
   }
 
   Future<void> _getCookie({String protocol = "http"}) async {
-    final addr = "$protocol://$serverUrl/api/session?token=$userToken";
+    final addr = "$protocol://$serverUrl/api/session";
     if (verbose) {
       print("Getting cookie at $addr");
     }
-    final response = await _dio.get<dynamic>(addr);
-    _cookie = response.headers["set-cookie"][0];
+    dynamic response;
+    try {
+      response = await _dio.get<Map<String, dynamic>>(addr,
+          queryParameters: <String, dynamic>{"token": userToken});
+    } on DioError catch (e) {
+      if (e.response != null) {
+        print("STATUS: ${e.response?.statusCode}");
+        print("DATA: ${e.response?.data}");
+        print("HEADERS: ${e.response?.headers}");
+        print("REQUEST: ${e.response?.request?.uri}");
+      } else {
+        print("STATUS: ${e?.response?.statusCode}");
+        print("REQUEST: ${e.request.uri}");
+        print("${e.request.receiveDataWhenStatusError}");
+        print("MESSAGE: ${e.message}");
+        rethrow;
+      }
+    } catch (e) {
+      print("EX");
+      print("STATUS: ${e?.response?.statusCode}");
+      print("REQUEST: ${e?.request?.uri}");
+      print("MESSAGE: ${e.message}");
+    }
+    _cookie = response.headers["set-cookie"][0].toString();
     if (verbose) {
       print("Cookie set: $_cookie");
     }
