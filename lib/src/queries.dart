@@ -87,11 +87,10 @@ class TraccarQueries {
       Map<String, dynamic> queryParams = const <String, dynamic>{}}) async {
     Response response;
     try {
-      response = await _dio.get<dynamic>(
+      response = await _dio.get<List<dynamic>>(
         uri,
         queryParameters: queryParams,
         options: Options(
-          contentType: ContentType.json,
           headers: <String, dynamic>{
             "Cookie": cookie,
             "Accept": "application/json"
