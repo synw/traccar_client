@@ -2,7 +2,8 @@ import 'dart:io';
 import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
-import 'models.dart';
+import 'package:device/device.dart';
+import 'models/device_from_position.dart';
 
 /// A class to handle the queries to the server
 class TraccarQueries {
@@ -76,7 +77,7 @@ class TraccarQueries {
     final response = await _httpRequest(uri: uri, queryParams: queryParameters);
     final devices = <Device>[];
     for (final data in response.data) {
-      devices.add(Device.fromPosition(data as Map<String, dynamic>,
+      devices.add(deviceFromPosition(data as Map<String, dynamic>,
           timeZoneOffset: timeZoneOffset));
     }
     return devices;

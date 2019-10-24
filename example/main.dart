@@ -1,5 +1,6 @@
 import 'package:traccar_client/traccar_client.dart';
 import 'package:pedantic/pedantic.dart';
+import 'package:device/device.dart';
 import 'conf.dart';
 
 void main() async {
@@ -13,8 +14,8 @@ void main() async {
   print("Listening for position updates");
   positions.listen((device) {
     print("POSITION UPDATE: $device");
-    print("${device.name}: ${device.position.geoPoint.latitude} / " +
-        "${device.position.geoPoint.longitude}");
+    print("${device.name}: ${device.position.latitude} / " +
+        "${device.position.longitude}");
   });
 
   /// devices

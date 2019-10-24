@@ -3,7 +3,9 @@ import 'dart:convert' as json;
 import 'package:meta/meta.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:dio/dio.dart';
-import 'models.dart';
+import 'package:device/device.dart';
+import 'models/position.dart';
+import 'models/device_from_position.dart';
 import 'queries.dart';
 
 /// The main class to handle device positions
@@ -83,10 +85,10 @@ class Traccar {
           if (_devicesMap.containsKey(id)) {
             device = _devicesMap[id];
           } else {
-            device = Device.fromPosition(posMap as Map<String, dynamic>,
-                keepAlive: keepAlive);
+            device = deviceFromPosition(posMap as Map<String, dynamic>,
+                keepAlive: Duration(minutes: keepAlive));
           }
-          device.position = pos;
+          device.position = pos.geoPoint;
           _devicesMap[id] = device;
           _positions.sink.add(device);
           if (verbose) {
