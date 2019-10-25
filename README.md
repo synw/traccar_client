@@ -20,6 +20,8 @@ Dart client for the Traccar geolocation server. Get real time devices positions 
    await trac.onReady;
    ```
 
+The token is a user token that you can generate from the Traccar web interface
+
 ### Listen for positions updates
 
    ```dart
