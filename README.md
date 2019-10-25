@@ -51,32 +51,9 @@ The token is a user token that you can generate from the Traccar web interface
 
 ## Data structure
 
-The position stream outputs `Device` objects with updated positions:
+[Device](https://github.com/synw/device): representation of a device
 
-   ```dart
-   class Device {
-     final int id;
-     String uniqueId;
-     int groupId;
-     String name;
-     double batteryLevel;
-     int keepAlive;
-     bool isDisabled;
-     bool isActive;
-     DevicePosition position;
-   }
-
-   class DevicePosition {
-     final int id;
-     final GeoPoint geoPoint;
-     final double distance;
-     final double totalDistance;
-     final String address;
-     final DateTime date;
-   }
-   ```
-
-[GeoPoint](https://github.com/synw/geopoint) is a model to store a geographical datapoint: [data structure](https://github.com/synw/geopoint#geopoint-1)
+[GeoPoint](https://github.com/synw/geopoint): geographical datapoints: [data structure](https://github.com/synw/geopoint#geopoint-1)
 
 ## Example
 
