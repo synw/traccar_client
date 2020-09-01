@@ -120,6 +120,7 @@ class Traccar {
     }
     dynamic response;
     try {
+       _dio.options.headers['content-Type'] = 'application/json';
       response = await _dio.get<Map<String, dynamic>>(addr,
           queryParameters: <String, dynamic>{"token": userToken});
     } on DioError catch (e) {

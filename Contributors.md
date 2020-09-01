@@ -1,0 +1,1 @@
+Fixed current bug related to Dio and minor changes in lib/src/client.dart in dio 
