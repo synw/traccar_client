@@ -9,10 +9,10 @@ environment:
 
 dependencies:
   web_socket_channel: ^1.1.0
-  dio: ^3.0.3
+  dio: ^3.0.10
   latlong: ^0.6.1
-  pedantic: ^1.6.0
-  meta: ^1.1.6
-  geopoint: ^0.6.1
+  pedantic: ^1.9.2
+  meta: ^1.2.2
+  geopoint: ^0.7.1
   device:
     path: ../device
